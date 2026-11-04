@@ -6,6 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+$current_user = $_SESSION['username'] ?? $_SESSION['fullname'] ?? 'User';
+
 try {
     $pdo = new PDO("sqlite:gravity_pos.db");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -18,7 +20,6 @@ try {
         image TEXT DEFAULT ''
     )");
 
-    // In-update ang orders table para magkaroon ng user_id para matrack kung kaninong customer ang order
     $pdo->exec("CREATE TABLE IF NOT EXISTS orders (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER DEFAULT 0,
@@ -34,21 +35,20 @@ try {
     $stmtProd = $pdo->query("SELECT COUNT(*) FROM products");
     if ($stmtProd->fetchColumn() == 0) {
         $pdo->exec("INSERT INTO products (name, category, price, image) VALUES 
-            ('Dark Choco Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=500&q=80'),
-            ('Matcha Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=500&q=80'),
-            ('Cheesecake Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1558857563-b3c10f877d95?w=500&q=80'),
-            ('Cookies & Cream Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1558857563-b3c10f877d95?w=500&q=80'),
+            ('Dark Choco Milk Tea', 'Milk Tea', 29.00, 'images/mocha frappe.jpg'),
+            ('Matcha Milk Tea', 'Milk Tea', 29.00, 'images/matcha frappe.jpg'),
+            ('Cheesecake Milk Tea', 'Milk Tea', 29.00, 'images/cheesecake frappe.jpg'),
+            ('Cookies & Cream Milk Tea', 'Milk Tea', 29.00, 'images/cookies and cream frappe.jpg'),
             ('Wintermelon Milk Tea', 'Milk Tea', 29.00, 'images/wintermelon fruit tea.jpg'),
-            ('Okinawa Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1525385133512-2f3bdd039a54?w=500&q=80'),
-            ('Red Velvet Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=500&q=80'),
-            ('Chocolate Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80'),
-            ('Salted Caramel Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80'),
-            ('Taro Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&q=80'),
-            ('Strawberry Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=500&q=80'),
-            ('Very Rocky Road Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1541658016709-82535e94bc69?w=500&q=80'),
-            ('Choco Berry Milk Tea', 'Milk Tea', 29.00, 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80'),
+            ('Okinawa Milk Tea', 'Milk Tea', 29.00, 'images/taro frappe.jpg'),
+            ('Red Velvet Milk Tea', 'Milk Tea', 29.00, 'images/strawberry frappe.jpg'),
+            ('Chocolate Milk Tea', 'Milk Tea', 29.00, 'images/chocolate frappe.jpg'),
+            ('Salted Caramel Milk Tea', 'Milk Tea', 29.00, 'images/caffe caramel.jpg'),
+            ('Taro Milk Tea', 'Milk Tea', 29.00, 'images/taro frappe.jpg'),
+            ('Strawberry Milk Tea', 'Milk Tea', 29.00, 'images/strawberry frappe.jpg'),
+            ('Very Rocky Road Milk Tea', 'Milk Tea', 29.00, 'images/java chips frappe.jpg'),
+            ('Choco Berry Milk Tea', 'Milk Tea', 29.00, 'images/chocolate frappe.jpg'),
             ('Lychee Fruit Tea', 'Fruit Tea', 29.00, 'images/lychee fruit tea.jpg'),
-            ('Kiwi Fruit Tea', 'Fruit Tea', 29.00, 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=500&q=80'),
             ('Lemon Fruit Tea', 'Fruit Tea', 29.00, 'images/lemon fruit tea.jpg'),
             ('Green Apple Fruit Tea', 'Fruit Tea', 29.00, 'images/green apple fruit tea.jpg'),
             ('Blueberry Fruit Tea', 'Fruit Tea', 29.00, 'images/blueberry fruit tea.jpg'),
@@ -56,22 +56,22 @@ try {
             ('Mango Fruit Tea', 'Fruit Tea', 29.00, 'images/mango fruit tea.jpg'),
             ('Watermelon Fruit Tea', 'Fruit Tea', 29.00, 'images/wintermelon fruit tea.jpg'),
             ('Mixed Berries Fruit Tea', 'Fruit Tea', 29.00, 'images/mixed berries fruit tea.jpg'),
-            ('Caffe Macchiato', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1485808190672-d0511bd3ef8c?w=500&q=80'),
-            ('Caffe Mocha', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&q=80'),
-            ('Caffe Vanilla', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80'),
-            ('Caffe Fudge', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80'),
-            ('Caffe Matcha', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=500&q=80'),
-            ('Caffe Hazelnut Latte', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1485808190672-d0511bd3ef8c?w=500&q=80'),
-            ('Caffe Caramel', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80'),
-            ('Caffe Cappuccino', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80'),
-            ('Caffe White Mochaccino', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1485808190672-d0511bd3ef8c?w=500&q=80'),
-            ('Caffe Butterscotch', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80'),
-            ('Caffe White Chocolate', 'Iced Coffee', 29.00, 'https://images.unsplash.com/photo-1485808190672-d0511bd3ef8c?w=500&q=80'),
+            ('Caffe Macchiato', 'Iced Coffee', 29.00, 'images/caffe macchiato.jpg'),
+            ('Caffe Mocha', 'Iced Coffee', 29.00, 'images/caffe mocha.jpg'),
+            ('Caffe Vanilla', 'Iced Coffee', 29.00, 'images/caffe vanilla.jpg'),
+            ('Caffe Fudge', 'Iced Coffee', 29.00, 'images/caffe fudge.jpg'),
+            ('Caffe Matcha', 'Iced Coffee', 29.00, 'images/hot matcha.jpg'),
+            ('Caffe Hazelnut Latte', 'Iced Coffee', 29.00, 'images/caffe hazelnut latte.jpg'),
+            ('Caffe Caramel', 'Iced Coffee', 29.00, 'images/caffe caramel.jpg'),
+            ('Caffe Cappuccino', 'Iced Coffee', 29.00, 'images/caramel cappuccino frappe.jpg'),
+            ('Caffe White Mochaccino', 'Iced Coffee', 29.00, 'images/caffe mocha.jpg'),
+            ('Caffe Butterscotch', 'Iced Coffee', 29.00, 'images/caffe caramel.jpg'),
+            ('Caffe White Chocolate', 'Iced Coffee', 29.00, 'images/caffe vanilla.jpg'),
             ('Mocha Frappe', 'Frappe', 49.00, 'images/mocha frappe.jpg'),
             ('Coffee Jelly Frappe', 'Frappe', 49.00, 'images/coffee jelly frappe.jpg'),
             ('Caramel Macchiato Frappe', 'Frappe', 49.00, 'images/caramel macchiato frappe.jpg'),
             ('Vanilla Coffee Frappe', 'Frappe', 49.00, 'images/vanilla coffee frappe.jpg'),
-            ('Caramel Cappuccino Frappe', 'Frappe', 49.00, 'images/caramel cappuccinno frappe.jpg'),
+            ('Caramel Cappuccino Frappe', 'Frappe', 49.00, 'images/caramel cappuccino frappe.jpg'),
             ('Cookies & Cream Frappe', 'Frappe', 59.00, 'images/cookies and cream frappe.jpg'),
             ('Cheesecake Frappe', 'Frappe', 59.00, 'images/cheesecake frappe.jpg'),
             ('Taro Frappe', 'Frappe', 59.00, 'images/taro frappe.jpg'),
@@ -81,19 +81,19 @@ try {
             ('Strawberry Frappe', 'Frappe', 59.00, 'images/strawberry frappe.jpg'),
             ('Avocado Frappe', 'Frappe', 59.00, 'images/avocado frappe.jpg'),
             ('Strawberry Vanilla Frappe', 'Frappe', 59.00, 'images/strawberry vanilla frappe.jpg'),
-            ('Hot Choco', 'Hot Cups', 35.00, 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80'),
-            ('Hot Cappuccino', 'Hot Cups', 35.00, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80'),
-            ('Hot Mocha', 'Hot Cups', 35.00, 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&q=80'),
-            ('Hot Caramel', 'Hot Cups', 35.00, 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&q=80'),
-            ('Hot Matcha', 'Hot Cups', 35.00, 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=500&q=80'),
-            ('Mix and Match Set', 'Specials', 75.00, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=500&q=80'),
-            ('Iskrambol Special', 'Iskrambol', 76.00, 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&q=80'),
-            ('Fruit Fizz', 'Fruit Fizz', 59.00, 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&q=80'),
-            ('Choco Lava Special Drink', 'Special Drinks', 49.00, 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=500&q=80'),
-            ('Cheese Fries (G-Snacks)', 'Snacks', 35.00, 'images/fries.jpg'),
-            ('Chicken Nuggets', 'Snacks', 50.00, 'https://images.unsplash.com/photo-1562967914-608f82629710?w=500&q=80'),
-            ('Milky Donuts', 'Snacks', 25.00, 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&q=80'),
-            ('G-Cookies', 'Snacks', 15.00, 'https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=500&q=80')");
+            ('Hot Choco', 'Hot Cups', 35.00, 'images/hot mocha.jpg'),
+            ('Hot Cappuccino', 'Hot Cups', 35.00, 'images/hot cappuccino.jpg'),
+            ('Hot Mocha', 'Hot Cups', 35.00, 'images/hot mocha.jpg'),
+            ('Hot Caramel', 'Hot Cups', 35.00, 'images/hot caramel.jpg'),
+            ('Hot Matcha', 'Hot Cups', 35.00, 'images/hot matcha.jpg'),
+            ('Mix and Match Set', 'Specials', 75.00, 'images/crispy chicken nuggets.jpg'),
+            ('Iskrambol Special', 'Iskrambol', 76.00, 'images/strawberry frappe.jpg'),
+            ('Fruit Fizz', 'Fruit Fizz', 59.00, 'images/lemon fruit tea.jpg'),
+            ('Choco Lava Special Drink', 'Special Drinks', 49.00, 'images/mocha frappe.jpg'),
+            ('Cheese Fries (G-Snacks)', 'Snacks', 35.00, 'images/cheese fries.jpg'),
+            ('Chicken Nuggets', 'Snacks', 50.00, 'images/crispy chicken nuggets.jpg'),
+            ('Milky Donuts', 'Snacks', 25.00, 'images/milky donuts.jpg'),
+            ('G-Cookies', 'Snacks', 15.00, 'images/g cookies.jpg')");
     }
 
     if (!isset($_SESSION['cart'])) {
@@ -102,7 +102,6 @@ try {
 
     $message = "";
 
-    // Pag-cancel ng order ng customer (Pwede lang kung 'Pending Verification')
     if (isset($_GET['cancel_order'])) {
         $cancel_id = (int)$_GET['cancel_order'];
         $checkOrder = $pdo->prepare("SELECT * FROM orders WHERE id = ? AND user_id = ?");
@@ -184,7 +183,6 @@ try {
 
     $products = $pdo->query("SELECT * FROM products")->fetchAll(PDO::FETCH_ASSOC);
 
-    // Kunin ang kasaysayan ng orders ng naka-login na customer
     $myOrdersStmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC");
     $myOrdersStmt->execute([$_SESSION['user_id']]);
     $myOrders = $myOrdersStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -277,6 +275,7 @@ try {
             height: 150px;
             overflow: hidden;
             position: relative;
+            background-color: #1a1a1a;
         }
 
         .product-img { 
@@ -346,9 +345,14 @@ try {
                 <button class="btn btn-outline-warning btn-sm rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#ordersModal">
                     <i class="bi bi-clock-history"></i> My Orders & History
                 </button>
+                <?php if ((($_SESSION['role'] ?? '') === 'admin')): ?>
+                    <a href="admin.php" class="btn btn-warning btn-sm rounded-pill px-3 fw-bold">
+                        <i class="bi bi-speedometer2"></i> Admin
+                    </a>
+                <?php endif; ?>
                 <div class="d-none d-md-flex align-items-center gap-2 bg-dark bg-opacity-50 px-3 py-1.5 rounded-pill border border-secondary border-opacity-25">
                     <i class="bi bi-person-circle text-warning"></i>
-                    <span class="text-white small fw-semibold"><?= htmlspecialchars($_SESSION['fullname']); ?></span>
+                    <span class="text-white small fw-semibold"><?= htmlspecialchars($current_user); ?></span>
                 </div>
                 <a href="logout.php" class="btn btn-outline-danger btn-sm rounded-pill px-3"><i class="bi bi-box-arrow-right"></i> Logout</a>
             </div>
@@ -360,7 +364,7 @@ try {
         <!-- Top Hero Banner -->
         <div class="banner-hero mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <h4 class="fw-bold text-white mb-1"><i class="bi bi-stars text-warning"></i> Welcome back, <?= htmlspecialchars($_SESSION['fullname']); ?>!</h4>
+                <h4 class="fw-bold text-white mb-1"><i class="bi bi-stars text-warning"></i> Welcome back, <?= htmlspecialchars($current_user); ?>!</h4>
                 <p class="text-muted small mb-0">Pumili ng inumin o pagkain. May 10% GCash deposit policy para sa bawat order.</p>
             </div>
             <div class="d-flex gap-2">
@@ -396,7 +400,7 @@ try {
                         <div class="col-6 col-md-4 product-item" data-category="<?= htmlspecialchars($p['category']); ?>">
                             <div class="card product-card h-100">
                                 <div class="img-wrapper">
-                                    <img src="<?= htmlspecialchars($p['image']); ?>" class="product-img" alt="<?= htmlspecialchars($p['name']); ?>">
+                                    <img src="<?= htmlspecialchars($p['image']); ?>" class="product-img" alt="<?= htmlspecialchars($p['name']); ?>" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\'><rect width=\'100%\' height=\'100%\' fill=\'%231a1a1a\'/><text x=\'50%\' y=\'50%\' fill=\'%23777\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'11\'>No Image</text></svg>';">
                                 </div>
                                 <div class="card-body d-flex flex-column justify-content-between p-3">
                                     <div>
@@ -478,7 +482,7 @@ try {
                             </div>
                             <p class="text-muted mb-0" style="font-size: 0.78rem;">
                                 Send 10% deposit (<strong>₱<?= number_format($requiredDeposit, 2); ?></strong>) to GCash:<br>
-                                <span class="text-white fw-bold fs-6">0912-345-6789</span> (GRAVITY POS)
+                                <span class="text-white fw-bold fs-6">0910-625-2966</span> (GRAVITY POS)
                             </p>
                         </div>
 
@@ -486,7 +490,7 @@ try {
                             <input type="hidden" name="action" value="checkout">
                             <div class="mb-2">
                                 <label class="form-label text-muted small mb-1">Customer Name</label>
-                                <input type="text" class="form-control glass-input form-control-sm" name="customer_name" required value="<?= htmlspecialchars($_SESSION['fullname']); ?>" readonly>
+                                <input type="text" class="form-control glass-input form-control-sm" name="customer_name" required value="<?= htmlspecialchars($current_user); ?>" readonly>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label text-warning small mb-1">GCash Reference No.</label>
